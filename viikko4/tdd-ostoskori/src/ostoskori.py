@@ -19,13 +19,20 @@ class Ostoskori:
         # kertoo korissa olevien ostosten yhteenlasketun hinnan
         hinta = 0
         for ostos in self._ostokset:
-            hinta += ostos.tuote.hinta()
+            lukumaara = ostos.lukumaara()
+            hinta += lukumaara * ostos.tuote.hinta()
         return hinta
         
     def lisaa_tuote(self, lisattava: Tuote):
         # lisää tuotteen
         uusi_ostos = Ostos(lisattava)
-        self._ostokset.append(uusi_ostos)
+        loytyy = False
+        for ostos in self._ostokset:
+            if ostos.tuote.nimi() == uusi_ostos.tuote.nimi() and ostos.tuote.hinta() == uusi_ostos.tuote.hinta():
+                loytyy = True
+                ostos.muuta_lukumaaraa(1)
+        if not loytyy:
+            self._ostokset.append(uusi_ostos)
 
     def poista_tuote(self, poistettava: Tuote):
         # poistaa tuotteen
