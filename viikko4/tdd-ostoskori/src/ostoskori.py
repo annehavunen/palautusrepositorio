@@ -10,7 +10,10 @@ class Ostoskori:
         # kertoo korissa olevien tavaroiden lukumäärän
         # eli jos koriin lisätty 2 kpl tuotetta "maito", tulee metodin palauttaa 2 
         # samoin jos korissa on 1 kpl tuotetta "maito" ja 1 kpl tuotetta "juusto", tulee metodin palauttaa 2 
-        return len(self._ostokset)
+        tavaroita = 0
+        for ostos in self._ostokset:
+            tavaroita += ostos.lukumaara()
+        return tavaroita
 
     def hinta(self):
         # kertoo korissa olevien ostosten yhteenlasketun hinnan
