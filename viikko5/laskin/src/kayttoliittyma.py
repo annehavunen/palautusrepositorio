@@ -17,11 +17,12 @@ class Kayttoliittyma:
         self._komennot = {
             Komento.SUMMA: Summa(sovellus, self._lue_syote),
             Komento.EROTUS: Erotus(sovellus, self._lue_syote),
-            Komento.NOLLAUS: Nollaus(sovellus, self._lue_syote),
-            Komento.KUMOA: Kumoa(sovellus, self._lue_syote)
+            Komento.NOLLAUS: Nollaus(sovellus),
+            Komento.KUMOA: Kumoa(sovellus, self._hae_edellinen)
         }
 
     def kaynnista(self):
+        self._edellinen = self._sovellus.tulos
         self._tulos_var = StringVar()
         self._tulos_var.set(self._sovellus.tulos)
         self._syote_kentta = ttk.Entry(master=self._root)
@@ -71,6 +72,8 @@ class Kayttoliittyma:
 
     def _suorita_komento(self, komento):
         komento_olio = self._komennot[komento]
+        if komento != Komento.KUMOA:
+            self._edellinen = self._sovellus.tulos
         komento_olio.suorita()
 
         self._kumoa_painike["state"] = constants.NORMAL
@@ -83,6 +86,8 @@ class Kayttoliittyma:
         self._syote_kentta.delete(0, constants.END)
         self._tulos_var.set(self._sovellus.tulos)
 
+    def _hae_edellinen(self):
+        return self._edellinen
 
 class Summa:
     def __init__(self, sovellus, metodi):
@@ -90,8 +95,8 @@ class Summa:
         self.metodi = metodi # _lue_syote
 
     def suorita(self):
-        self.arvo = self.metodi() # _lue_syote()
-        self.sovellus.plus(self.arvo)
+        arvo = self.metodi() # _lue_syote()
+        self.sovellus.plus(arvo)
 
 
 class Erotus:
@@ -100,12 +105,12 @@ class Erotus:
         self.metodi = metodi
 
     def suorita(self):
-        self.arvo = self.metodi()
-        self.sovellus.miinus(self.arvo)
+        arvo = self.metodi()
+        self.sovellus.miinus(arvo)
 
 
 class Nollaus:
-    def __init__(self, sovellus, metodi):
+    def __init__(self, sovellus):
         self.sovellus = sovellus
 
     def suorita(self):
@@ -114,10 +119,9 @@ class Nollaus:
 
 class Kumoa:
     def __init__(self, sovellus, metodi):
-        pass
+        self.sovellus = sovellus
+        self.metodi = metodi
 
     def suorita(self):
-        pass
-
-# pidetään muistissa edellinen arvo
-# aseta_arvo(self.edellinen)
+        edellinen = self.metodi()
+        self.sovellus.aseta_arvo(edellinen)
