@@ -56,7 +56,8 @@ class Kayttoliittyma:
         )
 
         tulos_teksti.grid(columnspan=4)
-        self._syote_kentta.grid(columnspan=4, sticky=(constants.E, constants.W))
+        self._syote_kentta.grid(
+            columnspan=4, sticky=(constants.E, constants.W))
         summa_painike.grid(row=2, column=0)
         erotus_painike.grid(row=2, column=1)
         self._nollaus_painike.grid(row=2, column=2)
@@ -89,23 +90,22 @@ class Kayttoliittyma:
     def _hae_edellinen(self):
         return self._edellinen
 
-class Summa:
-    def __init__(self, sovellus, metodi):
+
+class Komentotehdas:
+    def __init__(self, sovellus, kutsuttava_funktio):
         self.sovellus = sovellus
-        self.metodi = metodi # _lue_syote
+        self.kutsuttava_funktio = kutsuttava_funktio
 
     def suorita(self):
-        arvo = self.metodi() # _lue_syote()
+        arvo = self.kutsuttava_funktio()
+        self.tee_komento(arvo)
+
+class Summa(Komentotehdas):
+    def tee_komento(self, arvo):
         self.sovellus.plus(arvo)
 
-
-class Erotus:
-    def __init__(self, sovellus, metodi):
-        self.sovellus = sovellus
-        self.metodi = metodi
-
-    def suorita(self):
-        arvo = self.metodi()
+class Erotus(Komentotehdas):
+    def tee_komento(self, arvo):
         self.sovellus.miinus(arvo)
 
 
@@ -118,10 +118,10 @@ class Nollaus:
 
 
 class Kumoa:
-    def __init__(self, sovellus, metodi):
+    def __init__(self, sovellus, hae_edellinen):
         self.sovellus = sovellus
-        self.metodi = metodi
+        self.hae_edellinen = hae_edellinen
 
     def suorita(self):
-        edellinen = self.metodi()
+        edellinen = self.hae_edellinen()
         self.sovellus.aseta_arvo(edellinen)
